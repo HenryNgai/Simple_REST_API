@@ -25,7 +25,7 @@ go.work.sum
 .env
 
 # db files
-.db
+*.db
 
 # db journal
-.db-journal
+*.db-journal
