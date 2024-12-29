@@ -23,3 +23,9 @@ go.work.sum
 
 # env file
 .env
+
+# db files
+.db
+
+# db journal
+.db-journal
