@@ -11,13 +11,29 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Authenticate(email string, password string) {
-	log.Println("Asked for service authentication")
+// Expected to return the JWT after comparing hashed passwords
+func Authenticate(email string, password string) (string, error) {
+	// Check if user exists
+	user, noUserErr := models.GetUserByEmail(email)
+	if noUserErr != nil {
+		return "", noUserErr
+	}
+
+	// Compares a hashed password with its plain-text equivalent.
+	log.Println(user.HashedPassword)
+	passwordErr := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(password))
+	if passwordErr != nil {
+		return "", passwordErr
+	}
+
+	// TODO Generate JWT
+	log.Println("Success, JWT time")
+	return "JWT", nil
+
 }
 
 func Register(email string, password string) error {
-	log.Println("Asked for service registration")
-	err := models.DoesUserExist(email)
+	_, err := models.GetUserByEmail(email)
 	if err == nil { // We received no error, meaning we already have this user
 		return errors.ErrUserAlreadyyExists
 	}
