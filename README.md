@@ -14,12 +14,12 @@ go run ./cmd/api/main.go
 ```
 
 # Todo - My notes
-- Implement salting and hashing for password
-- Create dependency layer? Update db
-- Implement JWT (verify on frontend)
-- This completes basic REST API?
+- [x] Implement salting and hashing for password
+- [] Create dependency layer? Update db
+- [] Implement JWT (verify on frontend)
+- [] This completes basic REST API?
 
 # More Todo - After REST API
-- RPC API (different repo maybe)
-- Graphql API (different repo maybe)
-- Additional NoSQL database for a service?
+- [] RPC API (different repo maybe)
+- [] Graphql API (different repo maybe)
+- [] Additional NoSQL database for a service?
