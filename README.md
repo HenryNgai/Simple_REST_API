@@ -16,8 +16,8 @@ go run ./cmd/api/main.go
 # Todo - My notes
 - [x] Implement salting and hashing for password
 - [x] Create dependency layer? Update db
-- [] Implement JWT (verify on frontend)
-- [] This completes basic REST API?
+- [x] Implement JWT generation
+- [ ] Implement JWT verification
 
 # More Todo - After REST API
 - [] RPC API (different repo maybe)
