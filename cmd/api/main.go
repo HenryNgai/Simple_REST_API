@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/henryngai/Simple_REST_API/database"
 	"github.com/henryngai/Simple_REST_API/handlers"
+	"github.com/henryngai/Simple_REST_API/services"
 )
 
 func main() {
@@ -18,6 +19,13 @@ func main() {
 	} else {
 		log.Println("Connection established with database")
 	}
+
+	// Generate secret key
+	secretKey := services.GenerateSecretKey(25)
+	// Initialize Auth Service
+	authService := services.NewAuthService(secretKey)
+	// Initialize Handlers
+	handlers.InitHandlers(authService)
 
 	// Define endpoints
 	r.POST("/register", handlers.Register)

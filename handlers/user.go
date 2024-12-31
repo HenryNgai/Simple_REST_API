@@ -8,6 +8,13 @@ import (
 	"github.com/henryngai/Simple_REST_API/services"
 )
 
+// Passing auth services to handler. May need to provide other services later down the line
+var authService *services.AuthService
+
+func InitHandlers(as *services.AuthService) {
+	authService = as
+}
+
 func Login(c *gin.Context) {
 	// Get username and password from form
 	email := c.PostForm("email")
@@ -20,7 +27,7 @@ func Login(c *gin.Context) {
 		})
 	} else {
 		// Attempt to validate password and return JWT
-		JWTToken, err := services.Authenticate(email, password)
+		JWTToken, err := authService.Authenticate(email, password)
 		if err != nil {
 			c.JSON(400, gin.H{
 				"error": err.Error(),
@@ -47,7 +54,7 @@ func Register(c *gin.Context) {
 		})
 	} else {
 		// Attempt to Register user
-		services.Register(email, password)
+		authService.Register(email, password)
 	}
 
 }
