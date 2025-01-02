@@ -14,10 +14,11 @@ go run ./cmd/api/main.go
 ```
 
 # Using Application
-'''
+```
 go to http://localhost:8080/
 press register (says email but supports any type in "email" field) - Can be changed using binding in struct)
-presss login to test if user was successfully registered 
+presss login to test if user was successfully registered
+```
 
 JSON token saved message should appear after logging in
 
