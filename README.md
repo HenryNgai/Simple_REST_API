@@ -13,13 +13,23 @@ cd Simple_REST_API
 go run ./cmd/api/main.go
 ```
 
+# Using Application
+'''
+go to http://localhost:8080/
+press register (says email but supports any type in "email" field) - Can be changed using binding in struct)
+presss login to test if user was successfully registered 
+
+JSON token saved message should appear after logging in
+
+Validate json token by clicking validate button
+
 # Todo - My notes
 - [x] Implement salting and hashing for password
 - [x] Create dependency layer? Update db
 - [x] Implement JWT generation
-- [ ] Implement JWT verification
+- [x] Implement JWT verification
 
 # More Todo - After REST API
-- [] RPC API (different repo maybe)
-- [] Graphql API (different repo maybe)
-- [] Additional NoSQL database for a service?
+- [ ] RPC API (different repo maybe)
+- [ ] Graphql API (different repo maybe)
+- [ ] Additional NoSQL database for a service?
