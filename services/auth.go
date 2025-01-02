@@ -113,3 +113,35 @@ func GenerateSecretKey(length int) string {
 	}
 	return hex.EncodeToString(key)
 }
+
+// ValidateJWT validates the JWT token and returns claims if valid
+// interface{} allows for any type
+func (service *AuthService) ValidateJWT(tokenString string) (map[string]interface{}, error) {
+	// Parse the token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Ensure the signing method is HMAC
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.ErrSigningMethod
+		}
+		return []byte(service.SecretKey), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract and validate claims
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// Optional: Check expiration claim
+		if exp, ok := claims["exp"].(float64); ok {
+			expTime := time.Unix(int64(exp), 0)
+			if expTime.Before(time.Now()) {
+				return nil, errors.ErrExpToken
+			}
+		}
+		// Return claims as a map
+		return claims, nil
+	}
+
+	return nil, errors.ErrInvalidToken
+}

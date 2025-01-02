@@ -58,3 +58,10 @@ func Register(c *gin.Context) {
 	}
 
 }
+
+// Middleware should have checked JWT before calling handler function
+func Validate(c *gin.Context) {
+	c.JSON(400, gin.H{
+		"JWT Validation": "SUCCESS",
+	})
+}

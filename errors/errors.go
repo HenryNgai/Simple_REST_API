@@ -12,6 +12,9 @@ var (
 
 // Auth-related errors
 var (
-	ErrUnauthorized = errors.New("unauthorized access")
-	ErrTokenInvalid = errors.New("invalid token")
+	ErrUnauthorized  = errors.New("unauthorized access")
+	ErrTokenInvalid  = errors.New("invalid token")
+	ErrSigningMethod = errors.New("unexpected signing method")
+	ErrExpToken      = errors.New("token has expired")
+	ErrInvalidToken  = errors.New("invalid token")
 )

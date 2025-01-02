@@ -32,5 +32,12 @@ func main() {
 
 	r.POST("/login", handlers.Login)
 
+	// // Add /api/validate and require JWT authentication
+	// api := r.Group("/api")
+	// api.Use(middleware.JWTAuthMiddleware(authService)) // Middleware applies to all /api/* routes
+	// {
+	// 	api.GET("/validate", handlers.Validate)
+	// }
+
 	r.Run(":8080")
 }
