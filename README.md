@@ -1,5 +1,6 @@
 # Simple_REST_API
 Simple REST API that allows for a handful of HTTP requests.
+Utilizes gRPC for content delivery at https://github.com/HenryNgai/Simple_RPC_API
 
 
 # Clone the repository
@@ -29,6 +30,7 @@ Validate json token by clicking validate button
 - [x] Create dependency layer? Update db
 - [x] Implement JWT generation
 - [x] Implement JWT verification
+- [ ] Make gRPC calls to Simple_RPC_API
 
 # More Todo - After REST API
 - [ ] RPC API (different repo maybe)
