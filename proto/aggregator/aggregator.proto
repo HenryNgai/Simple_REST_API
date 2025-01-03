@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package aggregator;
+
+option go_package = "github.com/HenryNgai/SIMPLE_RPC_API/proto/aggregator";
+
+// gRPC service
+service ContentAggregator {
+  rpc GetContent (ContentRequest) returns (ContentResponse);
+}
+
+// gRPC request structure
+message ContentRequest {
+  string user_id = 1;
+  repeated string categories = 2; // Topics like "technology", "sports", etc.
+}
+
+// gRPC response structure
+message ContentResponse {
+  repeated ContentItem items = 1;
+}
+
+// gRPC response structure
+message ContentItem {
+  string title = 1;
+  string description = 2;
+  string source = 3; // E.g., "TechCrunch"
+  string url = 4;
+  string published_at = 5; // ISO 8601 format
+}
