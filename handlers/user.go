@@ -4,17 +4,23 @@ Handlers for routing in main.go
 package handlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	pb "github.com/henryngai/Simple_REST_API/proto/aggregator"
 	"github.com/henryngai/Simple_REST_API/services"
 )
 
-// Used for passing auth services to handler. May need to provide other services later down the line
-var authService *services.AuthService
+// Struct for handler
+type Handler struct {
+	AuthService *services.AuthService
+	GRPCClients *GRPCClients
+}
 
-func InitHandlers(as *services.AuthService) {
-	authService = as
+// Struct to hold gRPC APIs
+type GRPCClients struct {
+	ContentAggregator pb.ContentAggregatorClient
 }
 
 type UserRequest struct {
@@ -22,7 +28,8 @@ type UserRequest struct {
 	Password string `json:"password"`
 }
 
-func Login(c *gin.Context) {
+// Login handler
+func (h *Handler) Login(c *gin.Context) {
 	var req UserRequest
 
 	// Parse and validate the JSON request body
@@ -31,50 +38,72 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Check if empty
+	// Check if fields are empty
 	if req.Email == "" || req.Password == "" {
-		c.JSON(400, gin.H{
-			"error": "Either name or password is empty. Please re-enter fields",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Either email or password is empty. Please re-enter fields",
 		})
-	} else {
-		// Attempt to validate password and return JWT
-		JWTToken, err := authService.Authenticate(req.Email, req.Password)
-		if err != nil {
-			c.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-		} else {
-			// Return the token in the response
-			c.JSON(http.StatusOK, gin.H{
-				"message": "Login successful",
-				"token":   JWTToken,
-			})
-		}
-
+		return
 	}
 
-}
-
-func Register(c *gin.Context) {
-	// Get username and password from form
-	email := c.PostForm("email")
-	password := c.PostForm("password")
-
-	// Check if empty
-	if email == "" || password == "" {
-		c.JSON(400, gin.H{
-			"error": "Either name or password is empty. Please re-enter fields",
-		})
-	} else {
-		// Attempt to Register user
-		authService.Register(email, password)
+	// Authenticate user
+	JWTToken, err := h.AuthService.Authenticate(req.Email, req.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-}
-
-// Middleware should have checked JWT before calling handler function
-func Validate(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"JWT Validation": "SUCCESS",
+	// Return the token in the response
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"token":   JWTToken,
 	})
+}
+
+// Register handler
+func (h *Handler) Register(c *gin.Context) {
+	// Parse the request body
+	var req UserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check if fields are empty
+	if req.Email == "" || req.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Either email or password is empty. Please re-enter fields",
+		})
+		return
+	}
+
+	// Register user
+	err := h.AuthService.Register(req.Email, req.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
+}
+
+// Validate handler - Middleware should validate JWT before calling this function
+func (h *Handler) Validate(c *gin.Context) {
+	// Create the gRPC request
+	req := &pb.ContentRequest{
+		UserId: "1", // User ID as a string
+		Categories: []string{
+			"technology", // List of categories
+		},
+	}
+
+	// Make the gRPC call
+	resp, err := h.GRPCClients.ContentAggregator.GetContent(context.Background(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Return the response in JSON format
+	c.JSON(http.StatusOK, gin.H{"data": resp.Items}) // Send only the items field for brevity
 }
